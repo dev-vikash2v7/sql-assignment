@@ -1,0 +1,62 @@
+1.1 How many types of tigers, and the ncbi_id of the Sumatran Tiger?
+
+
+query - SELECT COUNT(DISTINCT species) AS tiger_types FROM taxonomy WHERE species LIKE '%tiger%'  OR tax_string LIKE '%tiger%'  OR tree_display_name LIKE '%tiger%' OR align_display_name LIKE '%tiger%';
+result - 735
+
+
+1.2 - Get the ncbi_id of the Sumatran Tiger using its biological name .
+
+query -  select ncbi_id from taxonomy where species like '%Sumatran Tiger%' ;;
+result - 9695
+
+
+2. Columns that can be used to join tables in this database
+query - 
+desc rfamseq;
+desc family;
+desc clan;
+desc clan_membership;
+desc full_region;
+desc taxonomy
+
+
+answer - 
+rfamseq.ncbi_id - taxonomy.ncbi_id
+rfamseq.rfamseq_acc  - full_region.rfamseq_acc
+family.rfam_acc  - full_region.rfam_acc 
+clan.clan_acc - clan_membership.clan_acc
+
+- ncbi_id , rfamseq_acc ,clan_acc &  clan_acc
+
+3. Which type of rice has the longest DNA sequence?
+
+query - select tm.species as riceType ,tm.tax_string , rq.length from rfamseq rq join taxonomy as tm  on rq.ncbi_id = tm.ncbi_id where tm.tax_string like '%Oryza%'  ORDER BY rq.length DESC LIMIT 1;
+
+result - 'Oryza sativa Indica Group', '192219'
+
+
+
+4. Pagination: 9th page (15 results per page) — families with max sequence length > 1,000,000
+
+query - select  f.author AS family_name, MAX(r.length) AS max_length FROM family f JOIN full_region fr ON f.rfam_acc = fr.rfam_acc JOIN rfamseq r ON fr.rfamseq_acc = r.rfamseq_acc  GROUP BY f.rfam_acc, f.rfam_id HAVING MAX(r.length) > 1000000 ORDER BY max_length DESC LIMIT 15 OFFSET 120;
+
+result - 
+
+family_name  |  length
+-------------------------------
+Gardner PP	836514780
+Gardner PP	836514780
+Boursnell C	836514780
+Weinberg Z, Ames TD	836514780
+Griffiths-Jones SR	836514780
+Griffiths-Jones SR	836514780
+Griffiths-Jones SR	836514780
+Griffiths-Jones SR	836514780
+Griffiths-Jones SR	836514780
+Griffiths-Jones SR	836514780
+Griffiths-Jones SR	836514780
+Moxon SJ, Wilkinson AC	830829764
+Moxon SJ, Daub J	801256715
+Moxon SJ	801256715
+Griffiths-Jones SR	801256715
